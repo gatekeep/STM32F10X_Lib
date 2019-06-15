@@ -14677,7 +14677,15 @@ typedef struct
 #define RCC_HSE_MIN         3000000U
 #define RCC_HSE_MAX        25000000U
 
+#if defined(OVERCLOCK2)
+#define RCC_MAX_FREQUENCY  120000000U
+
+#elif defined(OVERCLOCK1)
+#define RCC_MAX_FREQUENCY  96000000U
+
+#else
 #define RCC_MAX_FREQUENCY  72000000U
+#endif
 
 /**
   * @}
