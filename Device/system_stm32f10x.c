@@ -131,14 +131,6 @@
   #endif
 #endif
 
-#if defined(OVERCLOCK2)
-  #define RCC_CFGR_PLLMULL_X                    RCC_CFGR_PLLMULL15
-#elif defined(OVERCLOCK1)
-  #define RCC_CFGR_PLLMULL_X                    RCC_CFGR_PLLMULL12
-#else
-  #define RCC_CFGR_PLLMULL_X                    RCC_CFGR_PLLMULL9
-#endif
-
 /*!< Uncomment the following line if you need to use external SRAM mounted
      on STM3210E-EVAL board (STM32 High density and XL-density devices) or on 
      STM32100E-EVAL board (STM32 High-density value line devices) as data memory */ 
@@ -183,13 +175,7 @@
 #elif defined SYSCLK_FREQ_56MHz
   uint32_t SystemCoreClock         = SYSCLK_FREQ_56MHz;        /*!< System Clock Frequency (Core Clock) */
 #elif defined SYSCLK_FREQ_72MHz
-  #if defined(OVERCLOCK2)
-  uint32_t SystemCoreClock         = 120000000;
-  #elif defined(OVERCLOCK1)
-  uint32_t SystemCoreClock         = 96000000;
-  #else
   uint32_t SystemCoreClock         = SYSCLK_FREQ_72MHz;        /*!< System Clock Frequency (Core Clock) */
-  #endif
 #else /*!< HSI Selected as System Clock source */
   uint32_t SystemCoreClock         = HSI_VALUE;        /*!< System Clock Frequency (Core Clock) */
 #endif
@@ -1086,12 +1072,12 @@ static void SetSysClockTo72(void)
     /* PLL configuration: PLLCLK = PREDIV1 * 9 = 72 MHz */ 
     RCC->CFGR &= (uint32_t)~(RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL);
     RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLSRC_PREDIV1 | 
-                            RCC_CFGR_PLLMULL_X); 
+                            RCC_CFGR_PLLMULL9); 
 #else    
     /*  PLL configuration: PLLCLK = HSE * 9 = 72 MHz */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
                                         RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL_X);
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
 #endif /* STM32F10X_CL */
 
     /* Enable PLL */
