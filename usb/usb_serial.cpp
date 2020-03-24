@@ -148,7 +148,9 @@ uint8_t USBSerial::getRTS(void) {
     return usb_cdcacm_get_rts();
 }
 
+#if defined(ENABLE_USB)
 USBSerial usbserial;
+#endif
 
 /*
  * Bootloader hook implementations

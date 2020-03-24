@@ -62,7 +62,9 @@ public:
     uint8_t pending();
 };
 
+#if defined(ENABLE_USB)
 extern USBSerial usbserial;
+#endif
 
 #endif
 
