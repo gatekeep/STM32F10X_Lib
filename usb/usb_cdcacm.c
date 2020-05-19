@@ -440,7 +440,11 @@ uint32_t usb_cdcacm_tx(const uint8_t* buf, uint32_t len)
     return len;
 }
 
-
+uint32_t usb_cdcacm_available_for_write(void) {
+    uint32_t tail = tx_tail; // load volatile variable
+    uint32_t tx_unsent = (tx_head - tail) & CDC_SERIAL_TX_BUFFER_SIZE_MASK;
+    return CDC_SERIAL_TX_BUFFER_SIZE - tx_unsent - 1;
+}
 
 uint32_t usb_cdcacm_data_available(void) {
     return (rx_head - rx_tail) & CDC_SERIAL_RX_BUFFER_SIZE_MASK;

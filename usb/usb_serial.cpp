@@ -86,6 +86,10 @@ int USBSerial::available(void) {
     return usb_cdcacm_data_available();
 }
 
+int USBSerial::availableForWrite(void) {
+    return usb_cdcacm_available_for_write();
+}
+
 int USBSerial::peek(void)
 {
     uint8_t b;

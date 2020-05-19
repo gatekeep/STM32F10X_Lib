@@ -126,6 +126,7 @@ uint32_t usb_cdcacm_rx(uint8_t* buf, uint32_t len);
 uint32_t usb_cdcacm_peek(uint8_t* buf, uint32_t len);
 uint32_t usb_cdcacm_peek_ex(uint8_t* buf, uint32_t offset, uint32_t len);
 
+uint32_t usb_cdcacm_available_for_write(void); /* available space in TX buffer */
 uint32_t usb_cdcacm_data_available(void); /* in RX buffer */
 uint16_t usb_cdcacm_get_pending(void);
 uint8_t usb_cdcacm_is_transmitting(void);
