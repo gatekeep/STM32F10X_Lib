@@ -1043,7 +1043,8 @@ static void SetSysClockTo72(void)
     /* PCLK1 = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
 
-#ifdef STM32F10X_CL
+#ifdef STM32F10X_CL /* f105 or f107 */
+
 #if HSE_VALUE == 25000000
     /* Configure PLLs ------------------------------------------------------*/
     /* PLL2 configuration: PLL2CLK = (HSE / 5) * 8 = 40 MHz */
@@ -1060,6 +1061,12 @@ static void SetSysClockTo72(void)
     while((RCC->CR & RCC_CR_PLL2RDY) == 0)
     {
     }
+
+    /* PLL configuration: PLLCLK = PREDIV1 * 9 = 72 MHz */ 
+    RCC->CFGR &= (uint32_t)~(RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL);
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLSRC_PREDIV1 | 
+                            RCC_CFGR_PLLMULL9); 
+
 #elif HSE_VALUE == 8000000
     /* Configure PLLs ------------------------------------------------------*/
     /* PLL2 configuration: OFF */
@@ -1067,18 +1074,43 @@ static void SetSysClockTo72(void)
 
     RCC->CFGR2 &= (uint32_t)~(RCC_CFGR2_PREDIV1 | RCC_CFGR2_PREDIV1SRC);
     RCC->CFGR2 |= (uint32_t)(RCC_CFGR2_PREDIV1SRC_HSE | RCC_CFGR2_PREDIV1_DIV1);
-#endif
 
     /* PLL configuration: PLLCLK = PREDIV1 * 9 = 72 MHz */ 
     RCC->CFGR &= (uint32_t)~(RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL);
     RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLSRC_PREDIV1 | 
                             RCC_CFGR_PLLMULL9); 
-#else    
+
+#elif HSE_VALUE == 12000000
+    /* Configure PLLs ------------------------------------------------------*/
+    /* PLL2 configuration: OFF */
+    /* PREDIV1 configuration: PREDIV1CLK = HSE / 1 = 12 MHz */
+
+    RCC->CFGR2 &= (uint32_t)~(RCC_CFGR2_PREDIV1 | RCC_CFGR2_PREDIV1SRC);
+    RCC->CFGR2 |= (uint32_t)(RCC_CFGR2_PREDIV1SRC_HSE | RCC_CFGR2_PREDIV1_DIV1);
+
+    /* PLL configuration: PLLCLK = PREDIV1 * 6 = 72 MHz */ 
+    RCC->CFGR &= (uint32_t)~(RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL);
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLXTPRE_PREDIV1 | RCC_CFGR_PLLSRC_PREDIV1 | 
+                            RCC_CFGR_PLLMULL6); 
+#endif  /*HSE_VALUE*/
+
+#else
+  /* for f103 chips */
+  #if HSE_VALUE == 12000000
+    /*  PLL configuration: PLLCLK = HSE * 6 = 72 MHz */
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
+                                        RCC_CFGR_PLLMULL));
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL6);
+
+  #else
+    /*  Assuming HSE = 8MHz */
     /*  PLL configuration: PLLCLK = HSE * 9 = 72 MHz */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
                                         RCC_CFGR_PLLMULL));
     RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
-#endif /* STM32F10X_CL */
+  #endif
+
+#endif /* #end of #ifdef STM32F10X_CL */
 
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;
